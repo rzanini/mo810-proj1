@@ -30,14 +30,6 @@ class RobotMotion:
         res,robotOrientation = vrep.simxGetObjectOrientation(self.clientId,self.robot,-1,vrep.simx_opmode_streaming)
         return robotOrientation
 
-    def TurnRight(self, degrees):
-        #TURN RIGHT THE NUMBER OF DEGREEES
-        print ("Turning Right: $1 degrees!!", degrees)
-
-    def TurnLeft(self, degrees):
-        #TURN RIGHT THE NUMBER OF DEGREEES
-        print ("Turning Left: $1 degrees!!", degrees)
-
     def InitProximitySensors(self):
         for i in range(1, 16):
             res,state,point,detectedObj,vector = vrep.simxReadProximitySensor(self.clientId,self.sensors[i-1],vrep.simx_opmode_streaming)

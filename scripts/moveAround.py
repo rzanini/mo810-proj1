@@ -3,9 +3,10 @@
 import vrep,time,sys
 from RobotMotion import RobotMotion
 from BraitenbergMotion import BraitenbergMotion
+from BumperMotion import BumperMotion
 import time
 
-def main(robotIP, robotPort):
+def main(robotIP, robotPort, motionMode):
 
 	#INIT V-REP SIM
     vrep.simxFinish(-1) #close all open connections
@@ -28,7 +29,15 @@ def main(robotIP, robotPort):
 
         motionProxy = RobotMotion(clientID, robotHandle, leftWheel, rightWheel, sensorHandles)
 
-        motionLogic = BraitenbergMotion(motionProxy)
+        if(motionMode == 1):
+            motionLogic = BraitenbergMotion(motionProxy)
+        else:
+            if(motionMode == 2):
+               motionLogic = BumperMotion(motionProxy)
+            else:
+                print('Invalid motion mode!!')
+                vrep.simxFinish(-1)
+                exit(-1)
 
         #WHILE NOT BUMPING, KEEP WALKING
         #IF OBJECT FOUND, TURN AROUND
@@ -37,7 +46,8 @@ def main(robotIP, robotPort):
             #Get the image from the vision sensor
             motionLogic.DoMove();
 
-        motionProxy.Stop()
+        vrep.simxFinish(-1)
+        exit(-1)
 
     else:
         print('NOT Connected to remote API server. Check if the server is running!')
@@ -46,11 +56,13 @@ def main(robotIP, robotPort):
 if __name__ == "__main__":
     robotIp = "127.0.0.1"
     robotPort = 25000
+    motionMode = 2 #1 - Braitenberg, 2 - Bumper
 
     if len(sys.argv) <= 1:
         print ("Usage python moveAround.py robotIP robotPort (optional default: 127.0.0.1 25000)")
     else:
         robotIp = sys.argv[1]
         robotPort = sys.argv[2]
+        motionMode = sys.argv[3]
 
-    main(robotIp, robotPort)
+    main(robotIp, robotPort, motionMode)

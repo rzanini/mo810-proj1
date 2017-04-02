@@ -13,9 +13,15 @@ class BraitenbergMotion:
         self.leftSpeed = 0
         self.rightSpeed = 0
         self.detect = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        print ('Using Braitenberg Simple Vehicle 2a - running away from obstacles')
 
     def DoMove(self):
+
         #START WALKING AT MAX SPEED
+        vLeft=self.v0
+        vRight=self.v0
+
+        #Checks Sensor distances
         for i in range(1, 16):
             res,dist = self.robot.GetSensorDistance(i)
             if res & (dist<self.noDetectionDist):
@@ -25,12 +31,10 @@ class BraitenbergMotion:
             else:
                 self.detect[i-1]=0
 
-        vLeft=self.v0
-        vRight=self.v0
-
+        #Adjust speed according to Braintenberg Vector
         for i in range(1, 16):
-            vLeft=vLeft+self.braitenbergL[i-1]*self.detect[i-1]
-            vRight=vRight+self.braitenbergR[i-1]*self.detect[i-1]
+            self.leftSpeed=vLeft=vLeft+2.5*self.braitenbergL[i-1]*self.detect[i-1]
+            self.rightSpeed=vRight=vRight+2.5*self.braitenbergR[i-1]*self.detect[i-1]
 
         print ('Moving the robot with vLeft: {0} / vRight: {1}',vLeft,vRight)
         self.robot.MoveForward(vLeft,vRight)
