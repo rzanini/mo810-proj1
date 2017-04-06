@@ -1,10 +1,15 @@
 # -*- encoding: UTF-8 -*- 
 
-import vrep,time,sys
+import vrep
+import time
+import sys
 from RobotMotion import RobotMotion
 from BraitenbergMotion import BraitenbergMotion
 from BumperMotion import BumperMotion
 import time
+
+import numpy as np
+import matplotlib.pyplot as plt
 
 def main(robotIP, robotPort, motionMode):
 
@@ -15,7 +20,7 @@ def main(robotIP, robotPort, motionMode):
     if clientID!=-1:
         print('Connected to remote API server')
         #Get the robot handle
-        res1,robotHandle=vrep.simxGetObjectHandle(clientID,'Pioneer_p3dx',vrep.simx_opmode_blocking)
+        res1,robotHandle=vrep.simxGetObjectHandle(clientID,'Pioneer_p3dx',vrep.simx_opmode_oneshot_wait)
         #Get wheel handles
         res2,rightWheel=vrep.simxGetObjectHandle(clientID,'Pioneer_p3dx_rightMotor',vrep.simx_opmode_oneshot_wait)
         res3,leftWheel=vrep.simxGetObjectHandle(clientID,'Pioneer_p3dx_leftMotor',vrep.simx_opmode_oneshot_wait)
@@ -42,11 +47,34 @@ def main(robotIP, robotPort, motionMode):
         #WHILE NOT BUMPING, KEEP WALKING
         #IF OBJECT FOUND, TURN AROUND
         print ("Starting the main loop")
+        x = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+        y = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+        x_robot = []
+        y_robot = []
         while (vrep.simxGetConnectionId(clientID)!=-1):
             #Get the image from the vision sensor
             motionLogic.DoMove();
+            x_pos, y_pos, _ = motionLogic.robot.GetRobotPosition()
+            x_robot.append(x_pos)
+            y_robot.append(y_pos)
+            for i in range(16):
+                x_pos, y_pos = motionLogic.robot.GetSensorPoint(i, [x_pos,y_pos,_])
+                if x_pos != float('inf'):
+                    x[i].append(x_pos)
+                    y[i].append(y_pos)
+
+        NUM_COLORS = 16
+
+        cm = plt.get_cmap('gist_rainbow')
+        colors = [cm(1. * i / NUM_COLORS) for i in range(NUM_COLORS)]
+
 
         vrep.simxFinish(-1)
+        for i in range(16):
+            plt.scatter(y[i], x[i], s=1, c=colors[i])
+        plt.scatter(y_robot, x_robot, s=1, c='BLACK')
+        plt.gca().invert_xaxis()
+        plt.show()
         exit(-1)
 
     else:

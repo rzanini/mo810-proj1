@@ -4,9 +4,9 @@ class BraitenbergMotion:
 
     braitenbergL= (-0.2, -0.4, -0.6, -0.8, -1, -1.2, -1.4, -1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     braitenbergR= (-1.6,-1.4,-1.2,-1,-0.8,-0.6,-0.4,-0.2, 0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0)
-    noDetectionDist=0.8
-    maxDetectionDist=0.2
-    v0 = 5
+    noDetectionDist=0.4
+    maxDetectionDist=0.1
+    v0 = 3
 
     def __init__(self, robotMotion):
         self.robot = robotMotion

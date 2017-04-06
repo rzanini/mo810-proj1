@@ -8,9 +8,9 @@ from RobotMotion import RobotMotion
 
 class BumperMotion:
 
-    bumpDistance = 0.3
-    v0 = 5.0
-    vTurn = 2.0
+    bumpDistance = 0.2
+    v0 = 3.0
+    vTurn = 1.0
 
     def __init__(self, robotMotion):
         self.robot = robotMotion
@@ -26,16 +26,20 @@ class BumperMotion:
         vLeft=self.v0
         vRight=self.v0
 
+        #Check the groundtruth
+        position = self.robot.GetRobotPosition()
+        orientation = self.robot.GetRobotOrientation()
+
         self.shouldTurn = ''
         #Check if it is about to bump into something on the left
         for i in range(1, 4):
-            res,dist = self.robot.GetSensorDistance(i)
+            res,dist,point = self.robot.GetSensorDistance(i)
             if res & (dist<=self.bumpDistance):
                 self.shouldTurn = 'Right'
 
         #Check if it is about to bump into something on the left
         for i in range(5, 8):
-            res,dist = self.robot.GetSensorDistance(i)
+            res,dist,point = self.robot.GetSensorDistance(i)
             if res & (dist<=self.bumpDistance):
                 self.shouldTurn = 'Left'
 
